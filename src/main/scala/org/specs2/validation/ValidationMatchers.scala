@@ -1,5 +1,6 @@
 package org.specs2.validation
 
+import com.payit.validations.rules.Rule
 import com.payit.validations.{Failed, Success, Validated}
 import org.specs2.mutable.Specification
 
@@ -7,7 +8,31 @@ import org.specs2.matcher._
 import org.specs2.text.Quote._
 import org.specs2.execute.{ Failure, Result }
 
+import scala.collection.mutable
+
 trait ValidationMatchers extends Specification { outer =>
+
+  def passValues[T](values: T*): Matcher[Rule[T]] = { rule: Rule[T] =>
+    var failed = mutable.Seq.empty[T]
+    values.foreach { v =>
+      rule(v) match {
+        case Success(v) => Nil
+        case _ => failed = failed :+ v
+      }
+    }
+    (failed.isEmpty, s"Value(s): ${failed.toList} should pass validation for rule: ${rule.getClass.getSimpleName}")
+  }
+
+  def failValues[T](values: T*): Matcher[Rule[T]] = { rule: Rule[T] =>
+    var passed = mutable.Seq.empty[T]
+    values.foreach { v =>
+      rule(v) match {
+        case Success(_) => passed = passed :+ v
+        case _ => Nil
+      }
+    }
+    (passed.isEmpty, s"Value(s): ${passed.toList} should fail validation for rule: ${rule.getClass.getSimpleName}")
+  }
 
   def beSuccessful[T](t: => T) =
     new Matcher[Validated[_, T]] {
