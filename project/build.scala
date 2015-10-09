@@ -21,14 +21,13 @@ object ScalaValidations extends Build {
     scalacOptions in Test ++= Seq("-Yrangepos")
   )
 
-  lazy val profile = Project(id = "scala-validations", base = file("."),
+  lazy val root = Project(id = "scala-validations", base = file("."),
     settings = commonSettings ++ Seq(
       name := "scala-validations",
       libraryDependencies ++= Seq(
-        "org.specs2" %% "specs2-core" % "3.6.4" % "test",
-        "org.specs2" % "specs2-mock_2.11" % "3.6.4-20150928232002-999c515" % "test"
+        "org.specs2" %% "specs2-core" % "3.6.4" % "compile",
+        "org.specs2" % "specs2-mock_2.11" % "3.6.4-20150928232002-999c515" % "compile"
       )
     )
   )
-
 }
