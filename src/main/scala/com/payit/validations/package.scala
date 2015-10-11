@@ -15,4 +15,11 @@ package object validations extends GeneralRules with OrderingRules with StringRu
     }
   }
 
+  implicit class ValidationsOpts[T, V <: Validations](validationProp: ValidationProp[T, V]) {
+    def isValid: ValidationsRuleSet[T, V] = new ValidationsRuleSet[T, V](
+      validationProp.key,
+      validationProp.prop
+    )
+  }
+
 }
