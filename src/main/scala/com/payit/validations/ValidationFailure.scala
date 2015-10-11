@@ -6,3 +6,6 @@ case class ValidationFailure(
   ruleKey: String,
   message: String,
   params: Seq[Any] = Seq.empty)
+{
+  def withParentKey(parentKey: ParentKey) = copy(parentKey = parentKey)
+}
