@@ -49,4 +49,40 @@ Results:
         contact.lastName -> List(ValidationFailure(ParentKey(contact),lastName,blank,must not be blank,List())), 
         address.contact.name -> List(ValidationFailure(ParentKey(address.contact),name,blank,must not be blank,List()))
     ))
+    
+## Custom Validations
+Scala Validations comes with a handful of out of the box validation rules, however there are always use cases where you need to extend or create custom validation rules.
+    
+Depending on the use case there are 2 different ways of creating custom validation rules.    
+### Reusable
+If you have a use case where you need to reuse a custom validation rule across objects then the best thing to do is create your own class extending Rule, see below for an example;
 
+    case class MyCustomRule extends Rule[String] {
+      def apply(value: String): Validated[RuleViolation, String] = value match {
+        case x if x == "test" => success(value)
+        case _ => failed("ruleKey", "Custom Message")
+      }
+    }
+    
+Then in a class that extends "Validations" you can use your new custom validation rule;
+    
+    case class Person(name: String) extends Validations {
+      validations(
+        prop("name", { p => p.name }).is(MyCustomRule())
+      )
+    }
+
+### Inline
+The other use case where you might need a custom rule is when a validation rule is something scoped to a class, meaning it doesn't need to be reused or in a case there multiple properties of a class need to be used to validation a rule.
+
+Here is an example of creating a custom inline validation rule;
+
+    case class Person(name: String) extends Validations {
+      validations(
+        validate("name", { (person, failures) =>
+          if (person.name != "test") failures += RuleViolation("ruleKey", "Custom Message")
+        })
+      )
+    }
+
+Of course to clean this example up you could also define a private method that represents the signature of the second parameter and just pass that.

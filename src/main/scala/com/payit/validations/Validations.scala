@@ -1,5 +1,9 @@
 package com.payit.validations
 
+import com.payit.validations.rules.RuleViolation
+
+import scala.collection._
+
 trait Validations { obj =>
 
   protected var validator: Validator[this.type] = new Validator[this.type] {
@@ -15,6 +19,13 @@ trait Validations { obj =>
 
   protected def prop[V](key: String, prop: (this.type) => V, parentKey: ParentKey = ParentKey()) = {
     ValidationProp[this.type, V](key, prop, parentKey)
+  }
+
+  protected def validate(
+    key: String,
+    f: (this.type, mutable.ListBuffer[RuleViolation]) => Unit): CustomRuleSet[this.type] =
+  {
+    new CustomRuleSet[this.type](key, f)
   }
 
   protected def validationKey = obj.getClass().getSimpleName

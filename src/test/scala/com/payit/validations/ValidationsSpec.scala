@@ -17,6 +17,13 @@ class ValidationsSpec extends Specification with ValidationMatchers {
       )
     }
 
+    case class CustomValidationSpecObj(name: String) extends Validations {
+      def getValidator = validator
+      validations(
+        validate("name", { (obj, failures) =>  })
+      )
+    }
+
     "it should have Validator key matching the mixed in class name" >> {
       ValidationSpecObj("val1", "val2").getValidator.parentKey must_== ParentKey("ValidationSpecObj")
     }
@@ -57,6 +64,16 @@ class ValidationsSpec extends Specification with ValidationMatchers {
           specObject().getValidator.ruleSets must have size(2)
           specObject().getValidator.ruleSets(1).rules must have size(1)
           specObject().getValidator.ruleSets(1).rules(0) must beAnInstanceOf[Required[String]]
+        }
+      }
+      "when using validate" >> {
+        "it should contain a rule set of type CustomRuleSet" >> {
+          CustomValidationSpecObj("Testing").getValidator.ruleSets must have size(1)
+          CustomValidationSpecObj("Testing").getValidator.ruleSets.head must beAnInstanceOf[CustomRuleSet[CustomValidationSpecObj]]
+        }
+        "it should have expected rule set key" >> {
+          CustomValidationSpecObj("Testing").getValidator.ruleSets must have size(1)
+          CustomValidationSpecObj("Testing").getValidator.ruleSets.head.key must_== "name"
         }
       }
     }
