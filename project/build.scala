@@ -8,7 +8,7 @@ object ScalaValidations extends Build {
 
   lazy val commonSettings = Seq(
     version := "1.0",
-    organization := "com.payit",
+    organization := "com.github.lenzenc",
     scalaVersion := "2.11.4",
     ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) },
     resolvers ++= Seq(
