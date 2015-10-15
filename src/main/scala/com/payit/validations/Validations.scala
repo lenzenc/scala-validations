@@ -11,7 +11,7 @@ trait Validations { obj =>
     val ruleSets = Seq.empty
   }
 
-  def isValid: Validated[Map[String, Seq[ValidationFailure]], this.type] = validator(obj)
+  def isValid: Validated[immutable.Map[String, Seq[ValidationFailure]], this.type] = validator(obj)
 
   protected def validations(ruleSets: RuleSet[this.type, _]*) = {
     validator = createValidator(ruleSets)
